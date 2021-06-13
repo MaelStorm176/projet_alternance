@@ -45,9 +45,9 @@ $count_matiere = count($matieres);
                         echo "<tr id='ligne_'".$etudiant['id'].">";
                         echo "<td>".$etudiant["nom"]."<br />".$etudiant["prenom"]."</td>";
                         foreach ($matieres as $matiere){
-                            echo "<td id='moyenne_".$matiere['id']."'><input id='note_input_".$matiere['id']."' style='width: 100%' type='text' value='' disabled></td>";
+                            echo "<td><input style='width: 100%' type='text' value='' disabled></td>";
                         }
-                        echo "<td><i class='fas fa-plus'></i></td>";
+                        echo "<td><button type='button' class='btn btn-add' data-toggle='modal' data-target='#exampleModalCenter' value='".$etudiant['id']."'><i class='fas fa-plus'></i></button></td>";
                         echo "</tr>";
 
                     }
@@ -66,6 +66,65 @@ $count_matiere = count($matieres);
 </div>
 
 </body>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Ajout d'une note</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="">
+                    <input type="hidden" id="id_etudiant" name="id_etudiant" value="">
+                    <div class="container">
+                        <div class="row form-group">
+                            <div class="col-sm-6">
+                                <label for="select_matiere">Choisissez une matière :</label>
+                                <select class="form-control" id="select_matiere" name="select_matiere">
+                                    <option value="-1" selected>Selectionnez une matière</option>
+                                    <?php
+                                    foreach ($matieres as $matiere){
+                                        echo "<option value='".$matiere['id']."'>".$matiere['nom']."</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Définissez une note : </label>
+                                <div class="row ">
+                                    <div class="col-sm-4 ">
+                                        <input type="text" id="note_input" name="note_input" class="form-control text-center" value="0"/>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        /
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="text" id="note_input_max" name="note_input_max" class="form-control text-center" value="0"/>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button onclick="send_data()" type="button" class="btn btn-primary">Valider</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </html>
 
 <script
@@ -75,6 +134,9 @@ $count_matiere = count($matieres);
 </script>
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
 <script type="application/javascript">
     $(document).ready( function () {
         $('.table').DataTable({
@@ -85,6 +147,39 @@ $count_matiere = count($matieres);
             language: { "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json" }
         });
     });
+
+    $(".btn-add").click(function (){
+        $("#id_etudiant").attr("value",$(this).attr("value"));
+    });
+
+    function send_data(){
+        let data = $("form").serializeArray();
+        /*
+        alert(form);
+        let data = [];
+        $.each(form, function(i, field){
+            data.push(field.name + ":" + field.value + " ");
+        });*/
+
+        alert(data);
+
+        $.ajax({
+            url: "moyenne.php",
+            type: "post",
+            data: data,
+            success: function (response) {
+                alert(response);
+                // You will get response from your PHP page (what you echo or print)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+        });
+    }
+
+    function maj_moyenne(data_retour){
+        alert(data_retour);
+    }
 </script>
 
 <?php
